@@ -23,6 +23,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'blog',
     'blog_api',
+    'corsheaders',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,8 +41,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
@@ -65,10 +69,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES":[
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ]
-}
-
+} 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
