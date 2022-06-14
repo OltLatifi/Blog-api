@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from blog.models import Post
-from .serializers import PostSerializer
+from blog.models import Post, Category
+from .serializers import PostSerializer, CategorySerializer
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
 
 class PostUserWritePermission(BasePermission):
   message="Editing post is restricted to the author only."
@@ -19,6 +20,9 @@ class PostUserWritePermission(BasePermission):
 class PostList(viewsets.ModelViewSet):
   permission_classes = [PostUserWritePermission]
   serializer_class = PostSerializer
+  filter_backends = (filters.DjangoFilterBackend,)
+  filterset_fields = ('title','category')
+
   # queryset = Post.postobjects.all()
 
 
@@ -44,10 +48,11 @@ class PostList(viewsets.ModelViewSet):
 #     return Response(serializer.data)
 
 
-# class PostList(generics.ListCreateAPIView):
-#   # permission_classes=[DjangoModelPermissions]
-#   queryset = Post.postobjects.all() #custom objects
-#   serializer_class = PostSerializer
+class CategoryList(generics.ListCreateAPIView):
+  # permission_classes=[DjangoModelPermissions]
+  queryset = Category.objects.all() #custom objects
+  serializer_class = CategorySerializer
+
 
 # class PostDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
 #   permission_classes=[PostUserWritePermission]

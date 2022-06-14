@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'blog',
     'blog_api',
     'corsheaders',
+    'django_filters',
     'rest_framework',
     'rest_framework_simplejwt',
     'django.contrib.admin',
