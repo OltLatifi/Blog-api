@@ -53,9 +53,25 @@ class CategoryList(generics.ListCreateAPIView):
   queryset = Category.objects.all() #custom objects
   serializer_class = CategorySerializer
 
+class CreatePost(generics.CreateAPIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = PostSerializer
+  def perform_create(self, serializer):
+    serializer.save(author=self.request.user)
 
-# class PostDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
-#   permission_classes=[PostUserWritePermission]
+class AdminDetail(generics.ListAPIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = PostSerializer
+  def get_queryset(self):
+    queryset = Post.objects.filter(author=self.request.user)
+    return queryset
 
-#   queryset = Post.objects.all() #custom objects
-#   serializer_class = PostSerializer
+class EditPost(generics.UpdateAPIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = PostSerializer
+  queryset = Post.objects.all()
+
+class DeletePost(generics.RetrieveDestroyAPIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = PostSerializer
+  queryset = Post.objects.all()

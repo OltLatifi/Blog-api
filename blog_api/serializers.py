@@ -5,7 +5,7 @@ class PostSerializer(serializers.ModelSerializer):
   category = serializers.StringRelatedField()
   class Meta:
     model = Post
-    fields = ['id', 'title', 'author','excerpt', 'content','status','category']
+    fields = ['id', 'title', 'author','excerpt', 'content','status','category', 'date']
 
 class CategorySerializer(serializers.ModelSerializer):
   class Meta:

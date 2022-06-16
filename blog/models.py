@@ -1,6 +1,6 @@
 from django.db import models
-from django.utils import timezone
 from django.conf import settings
+
 class Category(models.Model):
   name = models.CharField(max_length=255)
   def __str__(self):
@@ -25,6 +25,8 @@ class Post(models.Model):
   published = models.DateTimeField(auto_now_add=True)
   author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'blog_posts')
   status = models.CharField(max_length=10, choices=options, default='published')
+  date = models.DateTimeField(auto_now_add=True)
+
   objects = models.Manager() # default manager (no need to write this)
   postobjects = PostObjects() # custom manager for only published data
 
