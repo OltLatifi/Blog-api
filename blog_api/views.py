@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
 from blog.models import Post, Category
 from .serializers import PostSerializer, CategorySerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, status, generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django_filters import rest_framework as filters
-
+from rest_framework.parsers import MultiPartParser, FormParser
 class PostUserWritePermission(BasePermission):
   message="Editing post is restricted to the author only."
   # allows anyone to access as long as the request is get, options, head
@@ -23,15 +23,13 @@ class PostList(viewsets.ModelViewSet):
   filter_backends = (filters.DjangoFilterBackend,)
   filterset_fields = ('title','category')
 
-  # queryset = Post.postobjects.all()
+  queryset = Post.postobjects.all()
 
 
   def get_object(self, queryset=None, **kwargs):
     item = self.kwargs.get('pk')
-    return get_object_or_404(Post, title=item)
+    return get_object_or_404(Post, slug=item)
 
-  def get_queryset(self):
-    return Post.objects.all()
 
 
 # class PostList(viewsets.ViewSet):
@@ -53,11 +51,18 @@ class CategoryList(generics.ListCreateAPIView):
   queryset = Category.objects.all() #custom objects
   serializer_class = CategorySerializer
 
-class CreatePost(generics.CreateAPIView):
+
+class CreatePost(APIView):
   permission_classes = [IsAuthenticated]
-  serializer_class = PostSerializer
-  def perform_create(self, serializer):
-    serializer.save(author=self.request.user)
+  parser_classes=[MultiPartParser, FormParser]
+  def post(self, request, format=None):
+    print(request.data)
+    serializer = PostSerializer(data=request.data)
+    if(serializer.is_valid()):
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AdminDetail(generics.ListAPIView):
   permission_classes = [IsAuthenticated]
@@ -66,12 +71,14 @@ class AdminDetail(generics.ListAPIView):
     queryset = Post.objects.filter(author=self.request.user)
     return queryset
 
-class EditPost(generics.UpdateAPIView):
+class EditPost(generics.RetrieveUpdateAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = PostSerializer
   queryset = Post.objects.all()
+  lookup_field = "slug"
 
 class DeletePost(generics.RetrieveDestroyAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = PostSerializer
   queryset = Post.objects.all()
+  lookup_field = "slug"

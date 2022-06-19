@@ -12,7 +12,7 @@ urlpatterns = [
   # Post Admin URLs
   path('create/', CreatePost.as_view(), name='createpost'),
   path('edit/postdetail/', AdminDetail.as_view(), name='admindetailpost'),
-  path('edit/<int:pk>/', EditPost.as_view(), name='editpost'),
-  path('delete/<int:pk>/', DeletePost.as_view(), name='deletepost'),
+  path('edit/<str:slug>/', EditPost.as_view(), name='editpost'),
+  path('delete/<str:slug>/', DeletePost.as_view(), name='deletepost'),
 ]
 urlpatterns += router.urls
