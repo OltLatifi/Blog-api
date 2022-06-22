@@ -25,10 +25,10 @@ class Post(models.Model):
     ('published','Published'),
   )
   category = models.ForeignKey(Category, on_delete=models.PROTECT, default=1)
-  title = models.CharField(max_length=255)
+  title = models.CharField(max_length=1000)
   image = models.ImageField(_("Image"), upload_to=upload_to, default="posts/default.png")
-  excerpt = models.TextField(null=True)
-  content = RichTextField(blank=True, null=True)
+  excerpt = models.TextField(null=True, max_length=10000)
+  content = models.TextField(blank=True, null=True, max_length=10000)
   slug = models.SlugField(max_length=255, unique_for_date='published')
   published = models.DateTimeField(blank=True, null=True)
   author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'blog_posts')

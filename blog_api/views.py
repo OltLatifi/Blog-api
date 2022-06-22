@@ -74,8 +74,10 @@ class AdminDetail(generics.ListAPIView):
 class EditPost(generics.RetrieveUpdateAPIView):
   permission_classes = [IsAuthenticated]
   serializer_class = PostSerializer
+  parser_classes=[MultiPartParser, FormParser]
   queryset = Post.objects.all()
   lookup_field = "slug"
+
 
 class DeletePost(generics.RetrieveDestroyAPIView):
   permission_classes = [IsAuthenticated]
